@@ -1,5 +1,9 @@
 # Admira Containers - admiractl changelog
 
+## 0.2.0 - 2023-08-08
+
+* Added the basic list command - missing the version with resource usage stats
+
 ## 0.1.0 - 2023-08-07
 
 * Added the create command - missing template flag
