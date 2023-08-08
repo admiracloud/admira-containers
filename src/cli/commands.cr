@@ -25,10 +25,9 @@ struct Commands
       exit
     end
 
-    # Otherwise, start the creation
-    # avoiding to check again if a container with the
-    # same name already exists, using "false" on the
-    # seccond argument of @admiractl.create method
+    # Otherwise, start the creation avoiding to check again if a container with
+    # the same name already exists, using "false" on the seccond argument of
+    # @admiractl.create method
     puts "Creating container #{args[0]}..."
     result = @admiractl.create(args, false)
 

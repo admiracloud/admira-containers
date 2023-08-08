@@ -12,7 +12,7 @@ struct Admiractl
   # 0  : container already exists
   # -1 : external error
   def create(args : Array(String), check_exists : Bool = true) : Int32
-    if check_exists & exists(args[0])
+    if check_exists && exists(args[0])
       return 0
     end
 
@@ -25,7 +25,7 @@ struct Admiractl
     return @helpers.container_list(raw)
   end
 
-  def exists(name : String)
+  def exists(name : String) : Bool
     exists : Bool = false
 
     container_list = list
