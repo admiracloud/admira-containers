@@ -17,57 +17,51 @@
 #
 # (c) Copyright by Admira Cloud LLC (previously Adimira LLC)
 
-# cli modular library
-require "./cli/help.cr"
-require "./cli/validate.cr"
+# requisites methods
+require "./cli/requisites.cr"
 
-# admiractl library
-require "./library/admiractl.cr"
+# commands which validate args and call admiractl respective method
+require "./cli/commands.cr"
 
-# Cli root commands
+# cli root commands
 struct Cli
-  # create an instance of validator
-  @validate = Validate.new
-  @admiractl = Admiractl.new
+  @requisites = Requisites.new
+  @commands = Commands.new
 
-  def start
-    # Only run if the use is root
-    @validate.is_root
+  def run
+    # Check pre-requisites first
 
-    # make a copy of ARGV
+    # User must be root
+    @requisites.is_root
+
+    # There must be arguments (otherwise the help message will be printed)
+    @requisites.has_args
+
+    # Pre-requisites met
+    # Lets start by making a copy of ARGV (global var which contains the command arguments)...
     args = ARGV
 
-    # When no argument is passed, show help
-    if args.size == 0
-      puts HELP
-      exit
-    end
-
-    # Extract the first argument (the root command) and validate it
+    # ...extracting the first argument (the root command)...
     arg = args.shift
+
+    # ...and validating it, calling the respective command when it's valid
 
     case arg
     when "list"
-      puts "list"
+      @commands.list
     when "create"
-      # Exit if invalid
-      @validate.create(args)
-
-      # Otherwise
-      @admiractl.create(args)
+      @commands.create(args)
     when "set"
       puts "set"
     when "-h", "--help", "help"
-      puts HELP
+      @commands.help
     when "-v", "--version", "version"
-      puts "admiractl version #{VERSION}"
+      @commands.version
     else
       puts "Invalid option: #{arg}"
     end
-
-    # Otherwise, we have arguments
   end
 end
 
 cli = Cli.new
-cli.start
+cli.run
