@@ -43,7 +43,7 @@ struct Cli
       exit
     end
 
-    # Extract the first argument (a root command) and validate it
+    # Extract the first argument (the root command) and validate it
     arg = args.shift
 
     case arg
