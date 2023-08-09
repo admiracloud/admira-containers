@@ -22,7 +22,7 @@ This is the current development status:
 - [x] basic `list` containers
 - [ ] complete `list` containers, with resource usage stats
 - [ ] `start <name>`, `stop <name>` and `restart <name>`
-- [ ] `delete <name>` container
+- [x] `delete <name>` container
 
 **Resource management (cpu, ram, storage)**
 - [ ] `set <name> --cpus N`

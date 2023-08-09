@@ -42,16 +42,46 @@ struct Commands
     exit
   end
 
-  def help
-    puts HELP
+  #
+  def delete(args : Array(String))
+    # Exit if invalid
+    @validate.delete(args)
+
+    # Proactively check if the container does not exist
+    if !@admiractl.exists(args[0])
+      puts "Container #{args[0]} does not exist"
+      exit
+    end
+
+    # Otherwise, start the deletion avoiding to check again if the container
+    # doesn't exist, using "false" on the seccond argument of
+    # @admiractl.create method
+    puts "Deleting container #{args[0]}..."
+    result = @admiractl.delete(args, false)
+
+    # Print the result to the user
+    case result
+    when 1
+      puts "Container #{args[0]} deleted successfully"
+    else
+      puts "An error occurred while attempting to delete the container #{args[0]}"
+    end
+
+    exit
   end
 
-  def version
-    puts "admiractl version #{VERSION}"
+  #
+  def help
+    puts HELP
   end
 
   #
   def list
     @terminal_table.list_containers(@admiractl.list)
+  end
+
+  #
+  def version
+    puts "admiractl version #{VERSION}"
   end
 end

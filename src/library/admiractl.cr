@@ -20,11 +20,22 @@ struct Admiractl
     return $?.success? ? 1 : -1
   end
 
-  def list
-    raw = `lxc-ls -f -F NAME,STATE,PID,RAM,SWAP,AUTOSTART,GROUPS,INTERFACE,IPV4,IPV6,UNPRIVILEGED`
-    return @helpers.container_list(raw)
+  # return codes
+  # 1  : container deleted
+  # 0  : container does not exist
+  # -1 : external error
+  def delete(args : Array(String), check_not_exists : Bool = true) : Int32
+    if check_not_exists && !exists(args[0])
+      return 0
+    end
+
+    `lxc-destroy -n #{args[0]} --quiet`
+    return $?.success? ? 1 : -1
   end
 
+  # return codes
+  # true  : container exists
+  # false : container does not exist
   def exists(name : String) : Bool
     exists : Bool = false
 
@@ -37,5 +48,12 @@ struct Admiractl
     end
 
     return exists
+  end
+
+  # return an array of containers: Array(Containers)
+  # the container type is defined on: /src/library/classes/container.cr
+  def list
+    raw = `lxc-ls -f -F NAME,STATE,PID,RAM,SWAP,AUTOSTART,GROUPS,INTERFACE,IPV4,IPV6,UNPRIVILEGED`
+    return @helpers.container_list(raw)
   end
 end

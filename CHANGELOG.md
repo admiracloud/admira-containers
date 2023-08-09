@@ -1,5 +1,9 @@
 # Admira Containers - admiractl changelog
 
+## 0.3.0 - 2023-08-09
+
+* Added delete command
+
 ## 0.2.0 - 2023-08-08
 
 * Added the basic list command - missing the version with resource usage stats

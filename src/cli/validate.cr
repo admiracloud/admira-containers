@@ -14,4 +14,16 @@ struct Validate
       exit
     end
   end
+
+  def delete(args : Array(String))
+    if args.size == 0
+      puts "Missing name for: admiractl delete <name>"
+      exit
+    end
+
+    if name_regex(args[0]) == nil
+      puts "Invalid name for: admiractl delete <name>: #{args[0]}"
+      exit
+    end
+  end
 end

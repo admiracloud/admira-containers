@@ -51,6 +51,8 @@ struct Cli
       @commands.list
     when "create"
       @commands.create(args)
+    when "delete"
+      @commands.delete(args)
     when "set"
       puts "set"
     when "-h", "--help", "help"
