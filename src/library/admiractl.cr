@@ -12,9 +12,7 @@ struct Admiractl
   # 0  : container already exists
   # -1 : external error
   def create(args : Array(String), check_exists : Bool = true) : Int32
-    if check_exists && exists(args[0])
-      return 0
-    end
+    return 0 if check_exists && exists(args[0])
 
     `lxc-create -n #{args[0]} --template debian-12-download --quiet`
     return $?.success? ? 1 : -1
@@ -25,11 +23,31 @@ struct Admiractl
   # 0  : container does not exist
   # -1 : external error
   def delete(args : Array(String), check_not_exists : Bool = true) : Int32
-    if check_not_exists && !exists(args[0])
-      return 0
-    end
+    return 0 if check_not_exists && !exists(args[0])
 
     `lxc-destroy -n #{args[0]} --quiet`
+    return $?.success? ? 1 : -1
+  end
+
+  # return codes
+  # 1  : container started
+  # 0  : container does not exist
+  # -1 : external error
+  def start(args : Array(String), check_not_exists : Bool = true) : Int32
+    return 0 if check_not_exists && !exists(args[0])
+
+    `lxc-start -n #{args[0]} --quiet`
+    return $?.success? ? 1 : -1
+  end
+
+  # return codes
+  # 1  : container stop
+  # 0  : container does not exist
+  # -1 : external error
+  def stop(args : Array(String), check_not_exists : Bool = true) : Int32
+    return 0 if check_not_exists && !exists(args[0])
+
+    `lxc-stop -n #{args[0]} --quiet`
     return $?.success? ? 1 : -1
   end
 

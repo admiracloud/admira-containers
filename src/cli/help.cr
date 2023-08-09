@@ -14,8 +14,6 @@ set {name}
     --disk N{unit}
     --hostname {hostname}
     --user {user_name} --password {password}
-    --
-    --
 
 start|stop|restart {name}
 HELP

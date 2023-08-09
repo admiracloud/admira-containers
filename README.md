@@ -6,7 +6,7 @@ admiractl is a system container manager for Linux containers. It aims to provide
 
 Because it is meant to be used only with cgroups v2, the minimum requirements are:
 
-- Linux Kernel version is 5.8 or later
+- Linux Kernel version is 5.8 or later (LTS versions from 5.10+ recommended)
 - Linux distribution with cgroups v2 enabled (see respective section below)
 
 ## Development roadmap
@@ -18,7 +18,7 @@ This is the current development status for the CLI:
 - [ ] `create --template <template_name>` container with chosen template
 - [x] basic `list` containers
 - [ ] complete `list` containers, with resource usage stats
-- [ ] `start <name>`, `stop <name>` and `restart <name>`
+- [x] `start <name>`, `stop <name>` and `restart <name>`
 - [x] `delete <name>` container
 
 **Resource management (cpu, ram, storage)**

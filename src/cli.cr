@@ -50,14 +50,20 @@ struct Cli
     # ...and validating it, calling the respective command when it's valid
 
     case arg
-    when "list"
-      @commands.list
     when "create"
       @commands.create(args)
     when "delete"
       @commands.delete(args)
+    when "list"
+      @commands.list
     when "set"
       puts "set"
+    when "start"
+      @commands.start(args)
+    when "stop"
+      @commands.stop(args)
+    when "restart"
+      @commands.restart(args)
     when "-h", "--help", "help"
       @commands.help
     when "-v", "--version", "version"
