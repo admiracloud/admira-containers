@@ -3,6 +3,7 @@
 ## 0.3.0 - 2023-08-09
 
 * Added delete command
+* cgroups v2 verification on runtime and information on readme
 
 ## 0.2.0 - 2023-08-08
 

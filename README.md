@@ -1,8 +1,13 @@
 # admiractl
 
-admiractl is a system container manager for Linux containers. Contrary to docker, it aims to provide containers as VMs and all the functionality necessary to manage those in just a single binary/executable.
+admiractl is a system container manager for Linux containers. It aims to provide containers as faster alternatives to virtual machines (VMs) with all the functionality necessary to manage those, including hardware resources, OS templates, network and storage, everything in just a single binary/executable which provides both a cli as well as a socket API.
 
-It provides both a cli as well as a socket API
+## Minimum requirements
+
+Because it is meant to be used only with cgroups v2, the minimum requirements are:
+
+- Linux Kernel version is 5.8 or later
+- Linux distribution with cgroups v2 enabled (see respective section below)
 
 ## Installation
 
@@ -45,6 +50,14 @@ This is the current development status:
 
 **Quality**
 - [ ] Automated tests
+
+## Linux sistributions with cgroup v2 support
+
+- Ubuntu (since 21.10, 22.04+ recommended)
+- Debian (since 11 bullseye)
+- Fedora (since 31)
+- Arch Linux (since April 2021)
+- RHEL and derivatives (since 9)
 
 ## Contributing
 

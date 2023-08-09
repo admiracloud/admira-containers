@@ -5,7 +5,7 @@
 # Original Author:  Paulo Coghi
 # Created:          08.04.2023
 #
-# Description:      System containers manager based on systemd-nspawn, currently based on cgroups v2 and namespaces
+# Description:      System containers manager based on lxc, made exclusively for cgroups v2
 #
 #                   It provides opinionated decisions about network configuration, storage configuration, sane defaults
 #                   when defining hardware resource limits, basic statistics and monitoring for all the resources used.
@@ -33,6 +33,9 @@ struct Cli
 
     # User must be root
     @requisites.is_root
+
+    # cgroups v2 must be enabed
+    @requisites.cgroups_v2_check
 
     # There must be arguments (otherwise the help message will be printed)
     @requisites.has_args
