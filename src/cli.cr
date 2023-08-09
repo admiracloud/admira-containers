@@ -54,6 +54,8 @@ struct Cli
       @commands.create(args)
     when "delete"
       @commands.delete(args)
+    when "enter"
+      return @commands.enter(args)
     when "list"
       @commands.list
     when "set"

@@ -1,5 +1,10 @@
 # Admira Containers - admiractl changelog
 
+## 0.4.0 - 2023-08-10
+
+* Added enter command
+* Added verification of container status before start, stop and restart actions
+
 ## 0.3.0 - 2023-08-09
 
 * Added delete, start, stop and restart commands
