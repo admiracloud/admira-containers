@@ -39,7 +39,7 @@ This is the current development status for the CLI:
 **General management**
 - [ ] `set <name> --hostname <hostname>`
 - [ ] `set <name> --user <username> --password`
-- [ ] `enter <name>` to initiate a terminal session inside a container
+- [x] `enter <name>` to initiate a terminal session inside a container
 
 **Template management**
 - [ ] `template list` 
