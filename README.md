@@ -33,7 +33,7 @@ This is the current development status for the CLI:
 
 **Resource management (cpu, ram, storage)**
 - [ ] `set <name> --cpus N`
-- [ ] `set <name> --ram N{unit}`
+- [x] `set <name> --ram N{unit}`
 - [ ] `set <name> --disk N{unit}`
 
 **General management**

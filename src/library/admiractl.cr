@@ -3,6 +3,11 @@
 # array of container instances
 require "./helpers/helpers.cr"
 
+# organized "set" methods, like set ram and cpus
+require "./helpers/set.cr"
+
+require "./classes/result.cr"
+
 struct Admiractl
   # Helpers methods
   @helpers = Helpers.new
@@ -32,7 +37,8 @@ struct Admiractl
   end
 
   def enter(name : String)
-    return `lxc-attach #{name}`
+    # return `lxc-attach #{name}`
+    return Process.exec("lxc-attach", args: [name], shell: false)
   end
 
   # return types
@@ -52,6 +58,10 @@ struct Admiractl
   def list
     raw = `lxc-ls -f -F NAME,STATE,PID,RAM,SWAP,AUTOSTART,GROUPS,INTERFACE,IPV4,IPV6,UNPRIVILEGED`
     return @helpers.container_list(raw)
+  end
+
+  def set(container : Container, resources : Resources)
+    set = SetResource.new(container, resources)
   end
 
   # return codes

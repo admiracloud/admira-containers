@@ -1,5 +1,15 @@
 # Admira Containers - admiractl changelog
 
+## 0.6.0 - 2023-08-18
+
+* Fully working "set" command for ram
+* Fixed "enter" command output from the subshell
+
+## 0.5.0 - 2023-08-12
+
+* Added "set" command for cpus, ram, and hostname
+* Added auto-completion to the cli
+
 ## 0.4.0 - 2023-08-10
 
 * Added enter command

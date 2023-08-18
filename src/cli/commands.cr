@@ -27,7 +27,7 @@ struct Commands
     # set name to lowercase
     args[0] = args[0].downcase
 
-    # Check and exit if the container already exists
+    # Exit if the container already exists
     _cant_exist(args[0])
 
     # Otherwise, create the container, avoiding another check with "false"
@@ -79,6 +79,32 @@ struct Commands
     @terminal_table.list_containers(@admiractl.list)
   end
 
+  def restart(args : Array(String))
+    # Exit if invalid
+    @validate.valid_name(args, "restart")
+
+    # Check and exit if the container does not exist
+    _must_exist(args[0])
+
+    # Otherwise, restart the container, avoiding another check with "false"
+    puts "Restarting container #{args[0]}..."
+
+    # Only first stop the container if it is still running
+    if @container.as(Container).state == "running"
+      result = @admiractl.stop(args, false)
+
+      # Error if the stop procedure didn't work
+      if (result != 1)
+        _print_result(result, args[0], "restarted", "restart")
+      end
+    end
+
+    result = @admiractl.start(args, false)
+
+    # Print the result to the user
+    _print_result(result, args[0], "restarted", "restart")
+  end
+
   def start(args : Array(String))
     # Exit if invalid
     @validate.valid_name(args, "start")
@@ -121,30 +147,23 @@ struct Commands
     _print_result(result, args[0], "stopped", "stop")
   end
 
-  def restart(args : Array(String))
+  def set(args : Array(String))
     # Exit if invalid
-    @validate.valid_name(args, "restart")
+    @validate.valid_name(args, "set")
 
-    # Check and exit if the container does not exist
+    # Exit if the container does not exist
     _must_exist(args[0])
 
-    # Otherwise, restart the container, avoiding another check with "false"
-    puts "Restarting container #{args[0]}..."
+    # Get valid resources, or exit if invalid
+    resources = @validate.set(args)
 
-    # Only first stop the container if it is still running
-    if @container.as(Container).state == "running"
-      result = @admiractl.stop(args, false)
+    # Set the resources
+    puts "Updating resources on container #{args[0]}..."
+    @admiractl.set(@container.as(Container), resources)
+    puts "Resources updated successfully"
 
-      # Error if the stop procedure doesn't worked
-      if (result != 1)
-        _print_result(result, args[0], "restarted", "restart")
-      end
-    end
-
-    result = @admiractl.start(args, false)
-
-    # Print the result to the user
-    _print_result(result, args[0], "restarted", "restart")
+    # TODO
+    # Print the specific errors for each resource, when its the case
   end
 
   def version
@@ -156,7 +175,7 @@ struct Commands
   def _cant_exist(name : String)
     container = @admiractl.exists(name)
 
-    if typeof(container) == Container
+    if container != nil
       puts "Container #{name} already exists"
       exit
     end
@@ -165,7 +184,7 @@ struct Commands
   def _must_exist(name : String)
     container = @admiractl.exists(name)
 
-    if typeof(container) == Nil
+    if container == nil
       puts "Container #{name} does not exist"
       exit
     end

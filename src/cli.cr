@@ -23,6 +23,9 @@ require "./cli/requisites.cr"
 # commands which validate args and call admiractl respective method
 require "./cli/commands.cr"
 
+# autocomplete methods
+require "./cli/autocomplete.cr"
+
 # cli root commands
 struct Cli
   @requisites = Requisites.new
@@ -37,7 +40,7 @@ struct Cli
     # cgroups v2 must be enabed
     @requisites.cgroups_v2_check
 
-    # There must be arguments (otherwise the help message will be printed)
+    # When no arguments are passed, the help message will be printed
     @requisites.has_args
 
     # Pre-requisites met
@@ -59,7 +62,7 @@ struct Cli
     when "list"
       @commands.list
     when "set"
-      puts "set"
+      @commands.set(args)
     when "start"
       @commands.start(args)
     when "stop"
@@ -70,6 +73,8 @@ struct Cli
       @commands.help
     when "-v", "--version", "version"
       @commands.version
+    when "__autocomplete"
+      Autocomplete.new.run(args)
     else
       puts "Invalid option: #{arg}"
     end

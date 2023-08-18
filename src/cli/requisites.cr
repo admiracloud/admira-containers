@@ -28,6 +28,11 @@ struct Requisites
   def is_root
     user = `id -u -n`.strip
     if user != "root"
+      # If autocompletion was called when non-root, returns nothing
+      if ARGV.size > 0 && ARGV[0] == "__autocomplete"
+        exit
+      end
+
       puts "admiractl must be run as root. Current user: #{user}"
       exit
     end
