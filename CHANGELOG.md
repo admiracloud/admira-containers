@@ -1,5 +1,11 @@
 # Admira Containers - admiractl changelog
 
+## 0.7.0 - 2023-08-20
+
+* Added "template [list]" command
+* Added config folder creation
+* Added caching for template list
+
 ## 0.6.0 - 2023-08-18
 
 * Fully working "set" command for ram

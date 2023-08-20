@@ -166,6 +166,22 @@ struct Commands
     # Print the specific errors for each resource, when its the case
   end
 
+  def template(args : Array(String))
+    if args.size == 0
+      @terminal_table.list_templates(@admiractl.template_list)
+      exit
+    end
+
+    arg = args[0]
+
+    case arg
+    when "list"
+      @terminal_table.list_templates(@admiractl.template_list)
+    else
+      puts "Invalid option: #{arg} for \"admiractl template\" command"
+    end
+  end
+
   def version
     puts "admiractl version #{VERSION}"
   end

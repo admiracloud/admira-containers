@@ -42,9 +42,7 @@ This is the current development status for the CLI:
 - [x] `enter <name>` to initiate a terminal session inside a container
 
 **Template management**
-- [ ] `template list` 
-- [ ] `template download <template_name>`
-- [ ] `template update <template_name>`
+- [x] `template list`
 
 **Network management**
 - [ ] `ip4 add` and `ip4 remove` 

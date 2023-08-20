@@ -2,8 +2,9 @@
 require "../library/admiractl.cr"
 
 struct Autocomplete
-  @main = ["create", "delete", "enter", "list", "set", "start", "stop", "restart"]
+  @main = ["create", "delete", "enter", "list", "set", "start", "stop", "restart", "template"]
   @name_commands = ["delete", "enter", "set", "start", "stop", "restart"]
+  @template_commands = ["template"]
 
   def run(args : Array(String))
     # with no arguments, return "main" commands
@@ -38,6 +39,12 @@ struct Autocomplete
 
       match.reject! { |c| !c.starts_with?(value) }
       puts match.join("\n")
+      exit
+    end
+
+    # teplate commands
+    if @template_commands.index(command) != nil
+      puts "list"
       exit
     end
   end

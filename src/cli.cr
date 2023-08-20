@@ -69,6 +69,8 @@ struct Cli
       @commands.stop(args)
     when "restart"
       @commands.restart(args)
+    when "template"
+      @commands.template(args)
     when "-h", "--help", "help"
       @commands.help
     when "-v", "--version", "version"

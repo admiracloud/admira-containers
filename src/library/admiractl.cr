@@ -11,6 +11,14 @@ require "./classes/result.cr"
 struct Admiractl
   # Helpers methods
   @helpers = Helpers.new
+  @config_path = "/etc/admiractl"
+  @template_cache = "templates.json"
+
+  def initialize(@config_path : String = "/etc/admiractl")
+    if !File.directory?(@config_path)
+      Dir.mkdir_p(@config_path, mode: 700)
+    end
+  end
 
   # return codes
   # 1  : container created
@@ -84,5 +92,10 @@ struct Admiractl
 
     `lxc-stop -n #{args[0]} --quiet`
     return $?.success? ? 1 : -1
+  end
+
+  #
+  def template_list
+    return @helpers.template_list("#{@config_path}/#{@template_cache}")
   end
 end
