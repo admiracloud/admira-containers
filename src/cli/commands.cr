@@ -1,5 +1,6 @@
 # container class
 require "../library/classes/container.cr"
+require "../library/classes/template.cr"
 
 # validation and help messages
 require "./validate.cr"
@@ -23,6 +24,7 @@ struct Commands
   def create(args : Array(String))
     # Exit if invalid
     @validate.valid_name(args, "create")
+    template : Template = @validate.has_template(args) ? @validate.valid_template(args[2], @admiractl.template_list) : @admiractl._get_default_template
 
     # set name to lowercase
     args[0] = args[0].downcase
@@ -30,9 +32,9 @@ struct Commands
     # Exit if the container already exists
     _cant_exist(args[0])
 
-    # Otherwise, create the container, avoiding another check with "false"
+    # Otherwise, create the container
     puts "Creating container #{args[0]}..."
-    result = @admiractl.create(args, false)
+    result = @admiractl.create(args[0], template)
 
     # Print the result to the user
     _print_result(result, args[0], "created", "create")
@@ -45,9 +47,9 @@ struct Commands
     # Check and exit if the container does not exist
     _must_exist(args[0])
 
-    # Otherwise, delete the container, avoiding another check with "false"
+    # Otherwise, delete the container
     puts "Deleting container #{args[0]}..."
-    result = @admiractl.delete(args, false)
+    result = @admiractl.delete(args[0])
 
     # Print the result to the user
     _print_result(result, args[0], "deleted", "delete")
@@ -66,7 +68,7 @@ struct Commands
       exit
     end
 
-    # Otherwise, stop the container, avoiding another check with "false"
+    # Otherwise, stop the container
     puts "Entering container #{args[0]}..."
     return @admiractl.enter(args[0])
   end
@@ -86,12 +88,12 @@ struct Commands
     # Check and exit if the container does not exist
     _must_exist(args[0])
 
-    # Otherwise, restart the container, avoiding another check with "false"
+    # Otherwise, restart the container
     puts "Restarting container #{args[0]}..."
 
     # Only first stop the container if it is still running
     if @container.as(Container).state == "running"
-      result = @admiractl.stop(args, false)
+      result = @admiractl.stop(args[0])
 
       # Error if the stop procedure didn't work
       if (result != 1)
@@ -99,7 +101,7 @@ struct Commands
       end
     end
 
-    result = @admiractl.start(args, false)
+    result = @admiractl.start(args[0])
 
     # Print the result to the user
     _print_result(result, args[0], "restarted", "restart")
@@ -118,9 +120,9 @@ struct Commands
       exit
     end
 
-    # Otherwise, start the container, avoiding another check with "false"
+    # Otherwise, start the container
     puts "Starting container #{args[0]}..."
-    result = @admiractl.start(args, false)
+    result = @admiractl.start(args[0])
 
     # Print the result to the user
     _print_result(result, args[0], "started", "start")
@@ -139,9 +141,9 @@ struct Commands
       exit
     end
 
-    # Otherwise, stop the container, avoiding another check with "false"
+    # Otherwise, stop the container
     puts "Stopping container #{args[0]}..."
-    result = @admiractl.stop(args, false)
+    result = @admiractl.stop(args[0])
 
     # Print the result to the user
     _print_result(result, args[0], "stopped", "stop")
@@ -208,13 +210,8 @@ struct Commands
     @container = container
   end
 
-  def _print_result(result : Int32, name : String, action : String, action2 : String)
-    case result
-    when 1
-      puts "Container #{name} #{action} successfully"
-    else
-      puts "An error occurred while attempting to #{action2} the container #{name}"
-    end
+  def _print_result(result : Bool, name : String, action : String, action2 : String)
+    puts result ? "Container #{name} #{action} successfully" : "An error occurred while attempting to #{action2} the container #{name}"
     exit
   end
 end

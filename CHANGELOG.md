@@ -1,5 +1,10 @@
 # Admira Containers - admiractl changelog
 
+## 0.8.0 - 2023-08-26
+
+* Improved "create" command with "--template" option
+* Concluded persistency of hardware resource changes
+
 ## 0.7.0 - 2023-08-20
 
 * Added "template [list]" command

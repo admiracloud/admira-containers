@@ -1,4 +1,5 @@
 require "../library/classes/resources.cr"
+require "../library/classes/template.cr"
 
 struct Validate
   @resources = Resources.new
@@ -104,6 +105,32 @@ struct Validate
     end
 
     return number
+  end
+
+  def has_template(args : Array(String)) : Bool
+    return false if args.size == 1
+
+    case args[1]
+    when "--template"
+      if args.size != 3
+        puts "Expecting a template name for: admiractl create #{args[0]} --template <name>"
+        exit
+      end
+
+      return true
+    else
+      puts "Invalid option #{args[1]} for \"admiractl create\""
+      exit
+    end
+  end
+
+  def valid_template(template : String, templates : Hash(String, Template)) : Template
+    if templates.has_key?(template)
+      return templates[template]
+    end
+
+    puts "Can't find template #{template}"
+    exit
   end
 
   # def valid_user(args : Array(String), index : Int32)

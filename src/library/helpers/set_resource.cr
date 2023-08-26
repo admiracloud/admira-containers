@@ -28,7 +28,7 @@ struct SetResource
     # read the config file
     raw = File.read("/var/lib/lxc/#{@container.name}/config")
 
-    # update the resource hash with the resources founda
+    # update the resource hash with the passed resources
     raw.each_line do |line|
       @line_number += 1
       config << line
@@ -88,13 +88,13 @@ struct SetResource
     index = @indexes["lxc.cgroup2.memory.#{type}"]
 
     if index["value"] != @resources.ram
-      final_line = "lxc.cgroup2.memory.#{type} = #{@resources.ram}"
+      complete_line_content = "lxc.cgroup2.memory.#{type} = #{@resources.ram}"
 
       if index["line"] == -1
-        @config.insert(@last_resource_line, final_line)
+        @config.insert(@last_resource_line, complete_line_content)
         @last_resource_line += 1
       else
-        @config[index["line"].as(Int32)] = final_line
+        @config[index["line"].as(Int32)] = complete_line_content
       end
     end
   end

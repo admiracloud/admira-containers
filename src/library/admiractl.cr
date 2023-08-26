@@ -4,44 +4,44 @@
 require "./helpers/helpers.cr"
 
 # organized "set" methods, like set ram and cpus
-require "./helpers/set.cr"
+require "./helpers/set_resource.cr"
 
+# classes
 require "./classes/result.cr"
+require "./classes/template.cr"
 
 struct Admiractl
   # Helpers methods
   @helpers = Helpers.new
   @config_path = "/etc/admiractl"
+  @config_file = "admiractl.conf"
   @template_cache = "templates.json"
+  @default_template = Template.new("almalinux", "9", "amd64")
 
-  def initialize(@config_path : String = "/etc/admiractl")
+  def initialize
     if !File.directory?(@config_path)
       Dir.mkdir_p(@config_path, mode: 700)
     end
   end
 
   # return codes
-  # 1  : container created
-  # 0  : container already exists
-  # -1 : external error
-  def create(args : Array(String), check_exists : Bool = true) : Int32
-    args[0] = args[0].downcase
+  # true  : container created
+  # false : container already exists
+  def create(name : String, template : Template) : Bool
+    name = name.downcase
 
-    return 0 if check_exists && exists(args[0])
+    template.version = "current" if template.version == ""
 
-    `lxc-create -n #{args[0]} --template debian-12-download --quiet`
-    return $?.success? ? 1 : -1
+    `lxc-create -n #{name} --quiet --template download -- template-options --dist #{template.distribution} --release #{template.version} --arch #{template.architecture}`
+    return $?.success?
   end
 
   # return codes
-  # 1  : container deleted
-  # 0  : container does not exist
-  # -1 : external error
-  def delete(args : Array(String), check_not_exists : Bool = true) : Int32
-    return 0 if check_not_exists && !exists(args[0])
-
-    `lxc-destroy -n #{args[0]} --quiet`
-    return $?.success? ? 1 : -1
+  # true  : container deleted
+  # false : container does not exist
+  def delete(name : String) : Bool
+    `lxc-destroy -n #{name} --quiet`
+    return $?.success?
   end
 
   def enter(name : String)
@@ -73,29 +73,28 @@ struct Admiractl
   end
 
   # return codes
-  # 1  : container started
-  # 0  : container does not exist
-  # -1 : external error
-  def start(args : Array(String), check_not_exists : Bool = true) : Int32
-    return 0 if check_not_exists && !exists(args[0])
-
-    `lxc-start -n #{args[0]} --quiet`
-    return $?.success? ? 1 : -1
+  # true  : container started
+  # false : container does not exist
+  def start(name : String) : Bool
+    `lxc-start -n #{name} --quiet`
+    return $?.success?
   end
 
   # return codes
-  # 1  : container stop
-  # 0  : container does not exist
-  # -1 : external error
-  def stop(args : Array(String), check_not_exists : Bool = true) : Int32
-    return 0 if check_not_exists && !exists(args[0])
-
-    `lxc-stop -n #{args[0]} --quiet`
-    return $?.success? ? 1 : -1
+  # true  : container stop
+  # false : container does not exist
+  def stop(name : String) : Bool
+    `lxc-stop -n #{name} --quiet`
+    return $?.success?
   end
 
   #
   def template_list
     return @helpers.template_list("#{@config_path}/#{@template_cache}")
+  end
+
+  #
+  def _get_default_template : Template
+    return @default_template
   end
 end
