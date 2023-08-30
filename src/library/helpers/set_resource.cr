@@ -48,7 +48,7 @@ struct SetResource
     end
 
     # when no resources were already being added, add a new section for it
-    create_resource_section if @last_resource_line == -1
+    create_resource_section if @last_resource_line == -1 && config.index("# Hardware configuration") != nil
 
     # update the resources on config
     update
@@ -66,16 +66,45 @@ struct SetResource
 
   def update
     # ram
-    if resources.ram != nil
+    if @resources.ram != nil
       ram("high")
       ram("max")
     end
 
     # cpu
+    if @resources.cpus != nil
+      cpus()
+    end
   end
 
   def save
     File.write("/var/lib/lxc/#{@container.name}/config", @config.join("\n"), mode: "w+")
+  end
+
+  def cpus
+    # update the container if its running
+    if @container.state == "running"
+      `lxc-cgroup -n #{@container.name} cpuset.cpus #{@resources.cpus}`
+
+      if !$?.success?
+        puts "Error while trying to set the cpus for #{@container.name} to #{@resources.cpus}"
+        exit
+      end
+    end
+
+    # add or update the config file
+    index = @indexes["lxc.cgroup2.cpuset.cpus"]
+
+    if index["value"] != @resources.cpus
+      complete_line_content = "lxc.cgroup2.cpuset.cpus = #{@resources.cpus}"
+
+      if index["line"] == -1
+        @config.insert(@last_resource_line, complete_line_content)
+        @last_resource_line += 1
+      else
+        @config[index["line"].as(Int32)] = complete_line_content
+      end
+    end
   end
 
   def ram(type : String)

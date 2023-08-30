@@ -32,7 +32,7 @@ This is the current development status for the CLI:
 - [x] `delete <name>` container
 
 **Resource management (cpu, ram, storage)**
-- [ ] `set <name> --cpus N`
+- [x] `set <name> --cpus N`
 - [x] `set <name> --ram N{unit}`
 - [ ] `set <name> --disk N{unit}`
 

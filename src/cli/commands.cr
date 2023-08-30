@@ -107,6 +107,25 @@ struct Commands
     _print_result(result, args[0], "restarted", "restart")
   end
 
+  def set(args : Array(String))
+    # Exit if invalid
+    @validate.valid_name(args, "set")
+
+    # Exit if the container does not exist
+    _must_exist(args[0])
+
+    # Get valid resources, or exit if invalid
+    resources = @validate.set(args)
+
+    # Set the resources
+    puts "Updating resources on container #{args[0]}..."
+    @admiractl.set(@container.as(Container), resources)
+    puts "Resources updated successfully"
+
+    # TODO
+    # Print the specific errors for each resource, when its the case
+  end
+
   def start(args : Array(String))
     # Exit if invalid
     @validate.valid_name(args, "start")
@@ -147,25 +166,6 @@ struct Commands
 
     # Print the result to the user
     _print_result(result, args[0], "stopped", "stop")
-  end
-
-  def set(args : Array(String))
-    # Exit if invalid
-    @validate.valid_name(args, "set")
-
-    # Exit if the container does not exist
-    _must_exist(args[0])
-
-    # Get valid resources, or exit if invalid
-    resources = @validate.set(args)
-
-    # Set the resources
-    puts "Updating resources on container #{args[0]}..."
-    @admiractl.set(@container.as(Container), resources)
-    puts "Resources updated successfully"
-
-    # TODO
-    # Print the specific errors for each resource, when its the case
   end
 
   def template(args : Array(String))

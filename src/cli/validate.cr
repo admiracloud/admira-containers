@@ -82,7 +82,7 @@ struct Validate
     example_number = has_unit ? "2G" : "2"
 
     if args.size <= index + 1
-      puts "Missing quantity argument for #{resource}. Ex: admiractl set #{args[0]} #{resource} #{example_number}"
+      puts "Missing value for #{resource}. Ex: admiractl set #{args[0]} #{resource} #{example_number}"
       exit
     end
 
@@ -99,12 +99,48 @@ struct Validate
       exit
     end
 
-    if !has_unit && !number_regex(number)
-      puts "Use only positive integers on: #{resource}"
-      exit
+    if !has_unit && resource == "--cpus"
+      # validate cpus passed
+      valid_cpus(number)
     end
 
     return number
+  end
+
+  def valid_cpus(cpus : String)
+    raw_cpus = `lscpu -p`
+
+    if !$?.success?
+      puts "Can't verify the number of total cores on host through 'lscpu'"
+      exit
+    end
+
+    # lines create an array with each line as elements
+    # pop gets the last element (the last line with the higher cpu number on the list)
+    # split the last line to an array, by using comma as the separator
+    # [0].to_i get the first element and convert it to integer
+    total_cpus = raw_cpus.lines.pop.split(',')[0].to_i
+
+    cpus_array = cpus.split(',')
+
+    cpus_array.each do |cpu|
+      # split in case of a range, oherwise the array will be of size 1
+      range = cpu.split('-')
+
+      # if there are more than two elements, stop here
+      if range.size > 2
+        puts "Invalid range of cpus: #{cpu}"
+        exit
+      end
+
+      # ensure each cpu reference to be a positive number and not greater than the max number of cpus available
+      range.each do |cpu_number|
+        if !number_regex(cpu_number) || cpu_number.to_i < 0 || cpu_number.to_i > total_cpus
+          puts "Invalid cpu number: #{cpu_number}"
+          exit
+        end
+      end
+    end
   end
 
   def has_template(args : Array(String)) : Bool

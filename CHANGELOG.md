@@ -1,5 +1,9 @@
 # Admira Containers - admiractl changelog
 
+## 0.9.0 - 2023-08-30
+
+* Fully working "set" command for cpus
+
 ## 0.8.0 - 2023-08-26
 
 * Improved "create" command with "--template" option
@@ -18,7 +22,7 @@
 
 ## 0.5.0 - 2023-08-12
 
-* Added "set" command for cpus, ram, and hostname
+* Added basic "set" command for cpus, ram, and hostname
 * Added auto-completion to the cli
 
 ## 0.4.0 - 2023-08-10
