@@ -14,7 +14,7 @@ struct SetResource
   property last_resource_line : Int32 = -1
 
   # possible resources
-  property resources_list : Array(String) = ["lxc.cgroup2.cpuset.cpus", "lxc.cgroup2.memory.max", "lxc.cgroup2.memory.high"]
+  property resources_list : Array(String) = ["lxc.cgroup2.cpuset.cpus", "lxc.cgroup2.memory.max", "lxc.cgroup2.memory.high", "lxc.cgroup2.memory.swap.max", "lxc.cgroup2.memory.swap.high"]
 
   # number of lines on config file
   @line_number : Int32 = -1
@@ -75,6 +75,12 @@ struct SetResource
     if @resources.cpus != nil
       cpus()
     end
+
+    # swap
+    if @resources.swap != nil
+      ram("swap.high")
+      ram("swap.max")
+    end
   end
 
   def save
@@ -107,17 +113,19 @@ struct SetResource
     end
   end
 
-  def ram(type : String)
+  def ram(level : String)
+    value : String = level.starts_with?("swap") ? @resources.swap.as(String) : @resources.ram.as(String)
+
     # update the container if its running
     if @container.state == "running"
-      `lxc-cgroup -n #{@container.name} memory.#{type} #{@resources.ram}`
+      `lxc-cgroup -n #{@container.name} memory.#{level} #{value}`
     end
 
     # add or update the config file
-    index = @indexes["lxc.cgroup2.memory.#{type}"]
+    index = @indexes["lxc.cgroup2.memory.#{level}"]
 
-    if index["value"] != @resources.ram
-      complete_line_content = "lxc.cgroup2.memory.#{type} = #{@resources.ram}"
+    if index["value"] != value
+      complete_line_content = "lxc.cgroup2.memory.#{level} = #{value}"
 
       if index["line"] == -1
         @config.insert(@last_resource_line, complete_line_content)

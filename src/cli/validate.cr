@@ -35,6 +35,8 @@ struct Validate
         @resources.disk = valid_number(args, index, arg, true)
       when "--ram"
         @resources.ram = valid_number(args, index, arg, true)
+      when "--swap"
+        @resources.swap = valid_number(args, index, arg, true)
       when "--hostname"
         @resources.hostname = valid_hostname(args, index)
         # when "--user"
@@ -88,6 +90,10 @@ struct Validate
 
     number = args[index + 1]
     unit = number[-1]
+
+    if number == "0"
+      return number
+    end
 
     if has_unit && !(unit == 'M' || unit == 'G')
       puts "Missing or wrong unit (use M or G) on: #{resource} #{number}"

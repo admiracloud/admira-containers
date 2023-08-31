@@ -1,5 +1,9 @@
 # Admira Containers - admiractl changelog
 
+## 0.10.0 - 2023-08-30
+
+* Added "--swap" as a possible resource to manage by the "set" command
+
 ## 0.9.0 - 2023-08-30
 
 * Fully working "set" command for cpus
