@@ -1,6 +1,10 @@
 # Admira Containers - admiractl changelog
 
-## 0.10.0 - 2023-08-30
+## 0.11.0 - 2023-08-31
+
+* Command "list" now provides resource usage stats for running containers
+
+## 0.10.0 - 2023-08-31
 
 * Added "--swap" as a possible resource to manage by the "set" command
 

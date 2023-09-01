@@ -95,8 +95,8 @@ struct Validate
       return number
     end
 
-    if has_unit && !(unit == 'M' || unit == 'G')
-      puts "Missing or wrong unit (use M or G) on: #{resource} #{number}"
+    if has_unit && !(unit == 'M' || unit == 'G' || unit == 'T')
+      puts "Missing or wrong unit (use M, G or T) on: #{resource} #{number}"
       exit
     end
 

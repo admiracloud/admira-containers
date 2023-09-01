@@ -17,7 +17,19 @@ struct Helpers
       end
 
       fields = line.split
-      list << Container.new(fields[0].downcase, fields[1].downcase)
+      container = Container.new(fields[0].downcase, fields[1].downcase)
+
+      if container.state == "running"
+        usage = _usage(fields[0])
+        container.cpus = usage["cpus"]
+        container.loadavg = usage["loadavg"]
+        container.ram = usage["memory_total"]
+        container.ram_usage = "#{usage["memory_used"]} (#{usage["memory_used_percent"]})"
+        container.disk = usage["disk_total"]
+        container.disk_usage = "#{usage["disk_used"]} (#{usage["disk_used_percent"]})"
+      end
+
+      list << container
 
       lines += 1
     end
@@ -52,6 +64,50 @@ struct Helpers
     File.write(cache_file, list.to_json, mode: "w+")
 
     return list
+  end
+
+  def _usage(name : String) : Hash(String, String)
+    result = Hash(String, String).new
+
+    Process.run(command: "lxc-attach", args: [name]) do |s|
+      i = s.input
+      o = s.output
+
+      i.puts "free -m"
+      temp = [] of String
+      temp << o.gets.as(String).strip
+      temp << o.gets.as(String).strip
+      temp << o.gets.as(String).strip
+      memory_raw = temp[1].split
+      result["memory_total"] = _mega_to_giga(memory_raw[1])
+      result["memory_used"] = _mega_to_giga(memory_raw[2])
+      result["memory_used_percent"] = "#{((memory_raw[2].to_f/memory_raw[1].to_f)*100).round(0).to_i}%"
+
+      i.puts "hostname -f"
+      result["hostname"] = o.gets.as(String).strip
+
+      i.puts "cat /proc/loadavg"
+      result["loadavg"] = o.gets.as(String).split[..2].join(" ").strip
+
+      i.puts "nproc --all"
+      result["cpus"] = o.gets.as(String).strip
+
+      i.puts "df -h"
+      o.gets # skips tye first line
+      disk_raw = o.gets.as(String).split
+      result["disk_total"] = disk_raw[1]
+      result["disk_used"] = disk_raw[2]
+      result["disk_used_percent"] = disk_raw[4]
+
+      i.puts "exit"
+    end
+
+    return result
+  end
+
+  def _mega_to_giga(number : String)
+    float = number.to_f
+    return float > 1024 ? "#{(float/1024).round(1)}G" : "#{number}M"
   end
 
   def _distribution_codename_to_version(distribution : String, codename : String) : String

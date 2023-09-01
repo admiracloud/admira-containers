@@ -3,29 +3,44 @@ require "../library/classes/template.cr"
 
 struct TerminalTable
   def list_containers(list : Array(Container))
-    length_name : Int32 = 4  # "NAME" length
-    length_state : Int32 = 5 # "STATE" length
+    length = Hash(String, Int32).new
     spacing = 4
 
-    # first, search for the bigger string on each column
-    list.each do |container|
-      length_name = container.name.size if container.name.size > length_name
-      length_state = container.state.size if container.state.size > length_state
+    # prepare length hash
+    list[0].to_hash.each do |column, value|
+      length[column] = column.size
+    end
+
+    # search for the bigger string on each column
+    list.each do |container_obj|
+      container = container_obj.to_hash
+
+      container.each do |column, value|
+        length[column] = value.size if value.size > length[column]
+      end
     end
 
     # Add the spacing to the bigger length found on each column
-    length_name += spacing
-    length_state += spacing
+    # Prepare header
+    header = [] of String
+    length.each do |column, value|
+      length[column] += spacing
+      header << column.upcase.ljust(length[column])
+    end
 
-    # Add the missing spacing to the table header
-    header_name = "NAME".ljust(length_name)
-    header_state = "STATE".ljust(length_state)
-
-    puts "#{header_name} #{header_state}"
+    # Print header
+    puts header.join(" ")
 
     # Then, print the table
-    list.each do |container|
-      puts "#{container.name.ljust(length_name)} #{container.state.ljust(length_state)}"
+    list.each do |container_obj|
+      container = container_obj.to_hash
+
+      line = [] of String
+      container.each do |column, value|
+        line << value.ljust(length[column])
+      end
+
+      puts line.join(" ")
     end
   end
 

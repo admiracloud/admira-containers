@@ -27,7 +27,8 @@ This is the current development status for the CLI:
 - [x] `create <name>` container with default template
 - [x] `create --template <template_name>` container with chosen template
 - [x] basic `list` containers
-- [ ] complete `list` containers, with resource usage stats
+- [x] complete `list` containers, with resource usage stats
+- [ ] sortable `list` containers, based on chosen column
 - [x] `start <name>`, `stop <name>` and `restart <name>`
 - [x] `delete <name>` container
 
