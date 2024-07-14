@@ -25,7 +25,7 @@ This is the current development status for the CLI:
 
 **Container management**
 - [x] `create <name>` container with default template
-- [x] `create --template <template_name>` container with chosen template
+- [x] `create <name> --template <template_name>` container with chosen template
 - [x] basic `list` containers
 - [x] complete `list` containers, with resource usage stats
 - [ ] sortable `list` containers, based on chosen column
@@ -39,7 +39,7 @@ This is the current development status for the CLI:
 - [ ] `set <name> --disk N{unit}`
 
 **General management**
-- [ ] `set <name> --hostname <hostname>`
+- [x] `set <name> --hostname <hostname>`
 - [ ] `set <name> --user <username> --password`
 - [x] `enter <name>` to initiate a terminal session inside a container
 
@@ -47,8 +47,16 @@ This is the current development status for the CLI:
 - [x] `template list`
 
 **Network management**
-- [ ] `ip4 add` and `ip4 remove` 
+- [ ] `ip4 add` and `ip4 remove`
 - [ ] `ip6 add` and `ip6 remove`
+
+**Proxy management**
+Update: proxy management is now being managed by a separated library, named Narnia
+
+- [x] `proxy set <domain>` to create or update a proxy
+- [x] `proxy delete <domain>` to delete an existing proxy
+- [x] `proxy ssl <domain>` to check and update ssl certificates
+- [x] `proxy list` to list all existing proxies
 
 **Quality**
 - [ ] Automated tests

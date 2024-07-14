@@ -27,12 +27,10 @@ require "./cli/commands.cr"
 require "./cli/autocomplete.cr"
 
 # cli root commands
-struct Cli
-  @requisites = Requisites.new
-  @commands = Commands.new
-
-  def run
-    # Check pre-requisites first
+class Cli
+  def initialize
+    # Prepare pre-requisites instance, to check them
+    @requisites = Requisites.new
 
     # User must be root
     @requisites.is_root
@@ -40,10 +38,18 @@ struct Cli
     # cgroups v2 must be enabed
     @requisites.cgroups_v2_check
 
+    # fixed local ips
+    @requisites.fixed_local_ips_check
+
     # When no arguments are passed, the help message will be printed
     @requisites.has_args
 
     # Pre-requisites met
+    # Instantiate command (and admiractl library internally)
+    @commands = Commands.new
+  end
+
+  def run
     # Lets start by making a copy of ARGV (global var which contains the command arguments)...
     args = ARGV
 
@@ -71,6 +77,8 @@ struct Cli
       @commands.restart(args)
     when "template"
       @commands.template(args)
+    when "proxy"
+      @commands.proxy(args)
     when "-h", "--help", "help"
       @commands.help
     when "-v", "--version", "version"

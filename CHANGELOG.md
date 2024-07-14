@@ -1,5 +1,10 @@
 # Admira Containers - admiractl changelog
 
+## 0.12.0 - 2024-07-14
+
+* Added "--autostart" as a possible option to manage by the "set" command
+* Added "--ip" as a possible option to manage by the "set" command (probably will be replaced by "ip4 add/remove") in future releases
+
 ## 0.11.0 - 2023-08-31
 
 * Command "list" now provides resource usage stats for running containers

@@ -12,7 +12,7 @@ require "./terminal_table.cr"
 # import admiractl container library
 require "../library/admiractl.cr"
 
-struct Commands
+class Commands
   # libraries
   @validate = Validate.new
   @admiractl = Admiractl.new
@@ -79,6 +79,34 @@ struct Commands
 
   def list
     @terminal_table.list_containers(@admiractl.list)
+  end
+
+  def proxy(args : Array(String))
+    # Exit when missing action
+    if args.size == 0
+      puts "Missing action on \"admiractl proxy <action>\""
+      exit
+    end
+
+    # Exit when action requires an argument
+    if args.size == 1 && args[0] != "list"
+      extra_ssl = args[0] == "ssl" ? " | --all" : ""
+      puts "Missing <proxy_name>#{extra_ssl} on \"admiractl proxy #{args[0]} <proxy_name>#{extra_ssl}\" command"
+      exit
+    end
+
+    action : String = arg = args.shift
+    @validate.valid_name(args, "proxy #{action}") if action == "set" || action == "delete" || (action == "ssl" && args[0] != "--all")
+
+    # proxy subcommands
+    case action
+    when "set"
+      puts "Setting proxy for #{args[0]}"
+    else
+      puts "Invalid proxy option: #{arg}"
+    end
+
+    exit
   end
 
   def restart(args : Array(String))

@@ -1,4 +1,4 @@
-# helpers with methods to to the heavy lifting,
+# helpers with methods to do the heavy lifting,
 # like transforming a raw command output into an
 # array of container instances
 require "./helpers/helpers.cr"
@@ -10,7 +10,10 @@ require "./helpers/set_resource.cr"
 require "./classes/result.cr"
 require "./classes/template.cr"
 
-struct Admiractl
+# subcommands
+require "./proxy-library.cr"
+
+class Admiractl
   # Helpers methods
   @helpers = Helpers.new
   @config_path = "/etc/admiractl"
@@ -19,9 +22,10 @@ struct Admiractl
   @default_template = Template.new("almalinux", "9", "amd64")
 
   def initialize
-    if !File.directory?(@config_path)
-      Dir.mkdir_p(@config_path, mode: 700)
-    end
+    Dir.mkdir_p(@config_path, mode: 0o700) if !File.directory?(@config_path)
+
+    # Proxy methods
+    @proxy = ProxyLibrary.new(@config_path)
   end
 
   # return codes
@@ -64,7 +68,7 @@ struct Admiractl
   # return an array of containers: Array(Containers)
   # the container type is defined on: /src/library/classes/container.cr
   def list
-    raw = `lxc-ls -f -F NAME,STATE,PID,RAM,SWAP,AUTOSTART,GROUPS,INTERFACE,IPV4,IPV6,UNPRIVILEGED`
+    raw = `lxc-ls -f -F NAME,STATE,PID,RAM,SWAP,AUTOSTART,GROUPS,IPV4,UNPRIVILEGED`
     return @helpers.container_list(raw)
   end
 

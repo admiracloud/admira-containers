@@ -2,9 +2,9 @@
 require "../library/admiractl.cr"
 
 struct Autocomplete
-  @main = ["create", "delete", "enter", "list", "set", "start", "stop", "restart", "template"]
+  @main = ["create", "delete", "enter", "list", "proxy", "set", "start", "stop", "restart", "template"]
   @name_commands = ["delete", "enter", "set", "start", "stop", "restart"]
-  @template_commands = ["template"]
+  @proxy_commands = ["set", "delete", "ssl", "list"]
 
   def run(args : Array(String))
     # with no arguments, return "main" commands
@@ -43,8 +43,18 @@ struct Autocomplete
     end
 
     # teplate commands
-    if @template_commands.index(command) != nil
+    if command == "template"
       puts "list"
+      exit
+    end
+
+    # proxy commands
+    if command == "proxy"
+      if value.size > 0
+        @proxy_commands.reject! { |c| !c.starts_with?(value) }
+      end
+
+      puts @proxy_commands.join("\n")
       exit
     end
   end

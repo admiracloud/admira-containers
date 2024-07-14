@@ -16,6 +16,10 @@ struct Validate
     username =~ /^[a-z][-a-z0-9]*\$/
   end
 
+  def ipv4_regex(ip : String)
+    ip =~ /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/([0-9]|[1-2][0-9]|3[0-2]))?$/
+  end
+
   def set(args : Array(String)) : Resources
     index = 1
     size = args.size
@@ -39,8 +43,14 @@ struct Validate
         @resources.swap = valid_number(args, index, arg, true)
       when "--hostname"
         @resources.hostname = valid_hostname(args, index)
+      when "--name"
+        @resources.name = valid_newname(args, index)
+      when "--ip"
+        @resources.ip = valid_ipv4(args, index)
+      when "--autostart"
+        @resources.autostart = valid_autostart(args, index)
         # when "--user"
-        #  valid_user(args, index)
+        # valid_user(args, index)
       else
         puts "Invalid argument #{arg}"
         exit
@@ -78,6 +88,54 @@ struct Validate
     end
 
     return hostname
+  end
+
+  def valid_ipv4(args : Array(String), index : Int32) : String
+    if args.size <= index + 1
+      puts "Missing ip for --ip <ip>"
+      exit
+    end
+
+    ip = args[index + 1]
+
+    if ipv4_regex(ip) == nil
+      puts "Invalid ip for: --ip #{ip}"
+      exit
+    end
+
+    return ip
+  end
+
+  def valid_autostart(args : Array(String), index : Int32) : String
+    if args.size <= index + 1 || ()
+      puts "Missing yes|no for --autostart <yes|no>"
+      exit
+    end
+
+    autostart = args[index + 1]
+
+    if autostart != "yes" && autostart != "no"
+      puts "Invalid value '#{autostart}' for --autostart <yes|no>"
+      exit
+    end
+
+    return autostart
+  end
+
+  def valid_newname(args : Array(String), index : Int32) : String
+    if args.size <= index + 1
+      puts "Missing name for --name <name>"
+      exit
+    end
+
+    name = args[index + 1]
+
+    if name_regex(name) == nil
+      puts "Invalid name for: --name #{name}"
+      exit
+    end
+
+    return name
   end
 
   def valid_number(args : Array(String), index : Int32, resource : String, has_unit : Bool) : String

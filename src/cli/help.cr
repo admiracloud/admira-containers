@@ -20,4 +20,14 @@ set <name>
 start|stop|restart <name>
 
 delete <name>
+
+template list
+
+proxy
+      set <main_domain> --ip <ip> [ --additional <additional_domain_1>[,<additional_domain_2>] ]
+      delete <main_domain>
+      ssl --all | <main_domain>
+      list
+
+
 HELP

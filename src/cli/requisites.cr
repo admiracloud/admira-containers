@@ -18,6 +18,14 @@ struct Requisites
     exit
   end
 
+  def fixed_local_ips_check
+    check : String = `grep LXC_DHCP_CONFILE /etc/default/lxc-net`.strip
+    # continue
+    # #LXC_DHCP_CONFILE=/etc/lxc/dnsmasq.conf
+    # or
+    # LXC_DHCP_CONFILE=/etc/lxc/dnsmasq.conf
+  end
+
   def has_args
     if ARGV.size == 0
       puts HELP

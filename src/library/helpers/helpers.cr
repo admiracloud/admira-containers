@@ -1,4 +1,4 @@
-# satndard libraries
+# standard libraries
 require "http/client"
 
 # classes
@@ -17,8 +17,12 @@ struct Helpers
       end
 
       fields = line.split
-      container = Container.new(fields[0].downcase, fields[1].downcase)
+      container = Container.new(fields[0].downcase, fields[1].downcase, fields[7] == "-" ? "" : fields[7])
 
+      # Autostart field
+      container.autostart = fields[5] == "1" ? "yes" : "no"
+
+      # Resource usage
       if container.state == "running"
         usage = _usage(fields[0])
         container.cpus = usage["cpus"]
@@ -89,7 +93,7 @@ struct Helpers
       i.puts "cat /proc/loadavg"
       result["loadavg"] = o.gets.as(String).split[..2].join(" ").strip
 
-      i.puts "nproc --all"
+      i.puts "nproc"
       result["cpus"] = o.gets.as(String).strip
 
       i.puts "df -h"
@@ -111,8 +115,8 @@ struct Helpers
   end
 
   def _distribution_codename_to_version(distribution : String, codename : String) : String
-    ubuntu_codenames = {"trusty" => "14.04", "xenial" => "16.04", "bionic" => "18.04", "focal" => "20.04", "jammy" => "22.04", "lunar" => "23.04", "mantic" => "23.10"}
-    debian_codenames = {"bookworm" => "12", "bullseye" => "11", "buster" => "10"}
+    ubuntu_codenames = {"trusty" => "14.04", "xenial" => "16.04", "bionic" => "18.04", "focal" => "20.04", "jammy" => "22.04", "lunar" => "23.04", "mantic" => "23.10", "noble" => "24.04"}
+    debian_codenames = {"trixie" => "13", "bookworm" => "12", "bullseye" => "11", "buster" => "10"}
 
     case distribution
     when "debian"
