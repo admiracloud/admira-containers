@@ -51,6 +51,7 @@ This is the current development status for the CLI:
 - [ ] `ip6 add` and `ip6 remove`
 
 **Proxy management**
+
 Update: proxy management is now being managed by a separated library, named Narnia
 
 - [x] `proxy set <domain>` to create or update a proxy
